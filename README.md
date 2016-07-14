@@ -1,2 +1,2 @@
 # connector-proik
-ProIK Connector
+Polygon/ConnId connector for ProIK

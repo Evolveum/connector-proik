@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://tempuri.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://tempuri.org/">
+      <s:element name="GetUser">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="tckn" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetUserResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetUserResult" type="tns:ProUser" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ProUser">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Tckn" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Adi" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Soyadi" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="KullaniciAdi" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Eposta" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Aktifmi" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="EtkiAlanieh" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="EtkiAlani" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="GuncellemeZamani" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="SonucKodu" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Hata" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="CreateUser">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="user" type="tns:ProUser" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CreateUserResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="CreateUserResult" type="tns:ProUserResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ProUserResult">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="SonucKodu" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Hata" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Users" type="tns:ArrayOfProUser" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfProUser">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="ProUser" nillable="true" type="tns:ProUser" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="UpdateUser">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="user" type="tns:ProUser" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UpdateUserResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UpdateUserResult" type="tns:ProUserResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="DisableUser">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="tckn" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="DisableUserResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DisableUserResult" type="tns:ProUserResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="EnableUser">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="tckn" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="EnableUserResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="EnableUserResult" type="tns:ProUserResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ListAllUser">
+        <s:complexType />
+      </s:element>
+      <s:element name="ListAllUserResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ListAllUserResult" type="tns:ProUserResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="GetUserSoapIn">
+    <wsdl:part name="parameters" element="tns:GetUser" />
+  </wsdl:message>
+  <wsdl:message name="GetUserSoapOut">
+    <wsdl:part name="parameters" element="tns:GetUserResponse" />
+  </wsdl:message>
+  <wsdl:message name="CreateUserSoapIn">
+    <wsdl:part name="parameters" element="tns:CreateUser" />
+  </wsdl:message>
+  <wsdl:message name="CreateUserSoapOut">
+    <wsdl:part name="parameters" element="tns:CreateUserResponse" />
+  </wsdl:message>
+  <wsdl:message name="UpdateUserSoapIn">
+    <wsdl:part name="parameters" element="tns:UpdateUser" />
+  </wsdl:message>
+  <wsdl:message name="UpdateUserSoapOut">
+    <wsdl:part name="parameters" element="tns:UpdateUserResponse" />
+  </wsdl:message>
+  <wsdl:message name="DisableUserSoapIn">
+    <wsdl:part name="parameters" element="tns:DisableUser" />
+  </wsdl:message>
+  <wsdl:message name="DisableUserSoapOut">
+    <wsdl:part name="parameters" element="tns:DisableUserResponse" />
+  </wsdl:message>
+  <wsdl:message name="EnableUserSoapIn">
+    <wsdl:part name="parameters" element="tns:EnableUser" />
+  </wsdl:message>
+  <wsdl:message name="EnableUserSoapOut">
+    <wsdl:part name="parameters" element="tns:EnableUserResponse" />
+  </wsdl:message>
+  <wsdl:message name="ListAllUserSoapIn">
+    <wsdl:part name="parameters" element="tns:ListAllUser" />
+  </wsdl:message>
+  <wsdl:message name="ListAllUserSoapOut">
+    <wsdl:part name="parameters" element="tns:ListAllUserResponse" />
+  </wsdl:message>
+  <wsdl:portType name="ProIKKysWebServiceSoap">
+    <wsdl:operation name="GetUser">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">T.C. kimlik no ile kullanici bilgisi getirir</wsdl:documentation>
+      <wsdl:input message="tns:GetUserSoapIn" />
+      <wsdl:output message="tns:GetUserSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CreateUser">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">ProUser nesnesi bilgileri ile PROIK üzerinde kullanici create eder</wsdl:documentation>
+      <wsdl:input message="tns:CreateUserSoapIn" />
+      <wsdl:output message="tns:CreateUserSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateUser">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">ProUser nesnesi bilgileri ile PROIK uzerinde kullanici bilgileri gunceller</wsdl:documentation>
+      <wsdl:input message="tns:UpdateUserSoapIn" />
+      <wsdl:output message="tns:UpdateUserSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="DisableUser">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">T.C. kimlik no ile kullanici pasife alinir</wsdl:documentation>
+      <wsdl:input message="tns:DisableUserSoapIn" />
+      <wsdl:output message="tns:DisableUserSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="EnableUser">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">T.C. kimlik no ile kullanici aktife alinir</wsdl:documentation>
+      <wsdl:input message="tns:EnableUserSoapIn" />
+      <wsdl:output message="tns:EnableUserSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ListAllUser">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Kullanici listesi döner</wsdl:documentation>
+      <wsdl:input message="tns:ListAllUserSoapIn" />
+      <wsdl:output message="tns:ListAllUserSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="ProIKKysWebServiceSoap" type="tns:ProIKKysWebServiceSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GetUser">
+      <soap:operation soapAction="http://tempuri.org/GetUser" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CreateUser">
+      <soap:operation soapAction="http://tempuri.org/CreateUser" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateUser">
+      <soap:operation soapAction="http://tempuri.org/UpdateUser" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DisableUser">
+      <soap:operation soapAction="http://tempuri.org/DisableUser" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="EnableUser">
+      <soap:operation soapAction="http://tempuri.org/EnableUser" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ListAllUser">
+      <soap:operation soapAction="http://tempuri.org/ListAllUser" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="ProIKKysWebServiceSoap12" type="tns:ProIKKysWebServiceSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GetUser">
+      <soap12:operation soapAction="http://tempuri.org/GetUser" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CreateUser">
+      <soap12:operation soapAction="http://tempuri.org/CreateUser" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateUser">
+      <soap12:operation soapAction="http://tempuri.org/UpdateUser" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DisableUser">
+      <soap12:operation soapAction="http://tempuri.org/DisableUser" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="EnableUser">
+      <soap12:operation soapAction="http://tempuri.org/EnableUser" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ListAllUser">
+      <soap12:operation soapAction="http://tempuri.org/ListAllUser" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="ProIKKysWebService">
+    <wsdl:port name="ProIKKysWebServiceSoap" binding="tns:ProIKKysWebServiceSoap">
+      <soap:address location="http://172.17.30.33/PROIKTEST/ProIKServices/ProIKKysWebService.asmx" />
+    </wsdl:port>
+    <wsdl:port name="ProIKKysWebServiceSoap12" binding="tns:ProIKKysWebServiceSoap12">
+      <soap12:address location="http://172.17.30.33/PROIKTEST/ProIKServices/ProIKKysWebService.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
