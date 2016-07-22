@@ -16,7 +16,9 @@
 
 package com.evolveum.polygon.connector.proik;
 
+import com.evolveum.polygon.connector.proik.service.DummyServiceImpl;
 import org.identityconnectors.common.logging.Log;
+import org.identityconnectors.framework.common.exceptions.AlreadyExistsException;
 import org.identityconnectors.framework.common.objects.*;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
@@ -38,11 +40,6 @@ public class TestClient {
     private static final Log LOG = Log.getLog(TestClient.class);
 
     static final ObjectClass ACCOUNT_OBJECT_CLASS = new ObjectClass(ObjectClass.ACCOUNT_NAME);
-
-    /**
-     * test user name
-     */
-    static final String USER_NAME = "Evolveum";
 
     /**
      * test user UID - TCKN (Turkish Citizenship Number)
@@ -81,13 +78,14 @@ public class TestClient {
     @Test
     public void testSchema() throws Exception {
         Schema schema = connector.schema();
-        LOG.info("generated schema need to compare manually with specification:\n{0}", schema);
+        LOG.ok("generated schema need to compare manually with specification:\n{0}", schema);
     }
 
     @Test
     public void testCreate() throws RemoteException {
         Set<Attribute> attributes = new HashSet<Attribute>();
 
+        String userName = "evolveum";
         String firstName = "Test";
         String lastName = "Evolveum";
         String email = "test@evolveum.com";
@@ -95,8 +93,8 @@ public class TestClient {
         String isDomainName = ProIKConnector.ENABLED;
         String domainName = "csb/gurer.onder";
 
-        attributes.add(AttributeBuilder.build(Name.NAME, USER_NAME));
-        attributes.add(AttributeBuilder.build(ProIKConnector.ATTR_UNIQUE_ID, USER_UID));
+        attributes.add(AttributeBuilder.build(Name.NAME, USER_UID));
+        attributes.add(AttributeBuilder.build(ProIKConnector.ATTR_USER_NAME, userName));
         attributes.add(AttributeBuilder.build(ProIKConnector.ATTR_FIRST_NAME, firstName));
         attributes.add(AttributeBuilder.build(ProIKConnector.ATTR_LAST_NAME, lastName));
         attributes.add(AttributeBuilder.build(ProIKConnector.ATTR_EMAIL_ADDRESS, email));
@@ -111,8 +109,9 @@ public class TestClient {
         ConnectorObject user = getUserByUid(USER_UID);
         Assert.assertTrue(user != null, "Created user " + USER_UID + " not found");
 
-        Assert.assertEquals(user.getAttributeByName(Name.NAME).getValue().get(0), USER_NAME);
+        Assert.assertEquals(user.getAttributeByName(Name.NAME).getValue().get(0), USER_UID);
         Assert.assertEquals(user.getAttributeByName(Uid.NAME).getValue().get(0), USER_UID);
+        Assert.assertEquals(user.getAttributeByName(ProIKConnector.ATTR_USER_NAME).getValue().get(0), userName);
         Assert.assertEquals(user.getAttributeByName(ProIKConnector.ATTR_FIRST_NAME).getValue().get(0), firstName);
         Assert.assertEquals(user.getAttributeByName(ProIKConnector.ATTR_LAST_NAME).getValue().get(0), lastName);
         Assert.assertEquals(user.getAttributeByName(ProIKConnector.ATTR_EMAIL_ADDRESS).getValue().get(0), email);
@@ -121,7 +120,33 @@ public class TestClient {
         Assert.assertEquals(user.getAttributeByName(OperationalAttributes.ENABLE_NAME).getValue().get(0), enable);
     }
 
-    @Test(dependsOnMethods = {"testCreate"})
+    @Test
+    public void testCreateAlreadyExists() throws RemoteException {
+        Set<Attribute> attributes = new HashSet<Attribute>();
+
+        String tckn = DummyServiceImpl.SAMPLE_TCKN;
+        String userName = "Evolveum";
+
+        attributes.add(AttributeBuilder.build(Name.NAME, tckn));
+        attributes.add(AttributeBuilder.build(ProIKConnector.ATTR_USER_NAME, userName));
+        // create it
+        OperationOptions operationOptions = null;
+        ConnectorObject account = null;
+        try {
+            // account exists, AlreadyExistsException must be throwd
+            connector.create(ACCOUNT_OBJECT_CLASS, attributes, operationOptions);
+        } catch (AlreadyExistsException e) {
+            account = getUserByUid(tckn);
+        }
+
+        // read it
+        ConnectorObject user = getUserByUid(USER_UID);
+        Assert.assertTrue(user != null, "Created user " + USER_UID + " not found");
+
+        Assert.assertTrue(account != null, "user not found");
+    }
+
+    @Test//(dependsOnMethods = {"testCreate"})
     public void testListAllUsers() throws RemoteException {
         ProIKFilter query = null;
         final int[] count = {0};
@@ -129,6 +154,7 @@ public class TestClient {
             @Override
             public boolean handle(ConnectorObject connectorObject) {
                 count[0]++;
+                LOG.ok("connectorObject: {0}", connectorObject);
                 return true; // continue
             }
         };
@@ -142,7 +168,7 @@ public class TestClient {
     public void testGetUser() throws RemoteException {
         ConnectorObject user = getUserByUid(USER_UID);
         Assert.assertTrue(user != null, "Find created user returns null");
-        Assert.assertEquals(user.getAttributeByName(Name.NAME).getValue().get(0), USER_NAME);
+        Assert.assertEquals(user.getAttributeByName(Name.NAME).getValue().get(0), USER_UID);
         Assert.assertEquals(user.getAttributeByName(Uid.NAME).getValue().get(0), USER_UID);
     }
 
@@ -171,15 +197,16 @@ public class TestClient {
         Set<Attribute> attributes = new HashSet<Attribute>();
 
         String firstName = "Test v.2";
-        String renamedUserName = USER_NAME + "V2"; // rename user
+        String renamedUserName = "Evolveum" + "V2"; // rename user
         String lastName = "Evolveum v.2";
         String email = "testV2@evolveum.com";
         Boolean enable = true; // enable user
         String isDomainName = ProIKConnector.DISABLED;
         String domainName = "csb";
 
-        attributes.add(AttributeBuilder.build(Name.NAME, renamedUserName));
+        attributes.add(AttributeBuilder.build(Name.NAME, USER_UID));
         attributes.add(AttributeBuilder.build(Uid.NAME, USER_UID));
+        attributes.add(AttributeBuilder.build(ProIKConnector.ATTR_USER_NAME, renamedUserName));
         attributes.add(AttributeBuilder.build(ProIKConnector.ATTR_FIRST_NAME, firstName));
         attributes.add(AttributeBuilder.build(ProIKConnector.ATTR_LAST_NAME, lastName));
         attributes.add(AttributeBuilder.build(ProIKConnector.ATTR_EMAIL_ADDRESS, email));
@@ -194,8 +221,9 @@ public class TestClient {
         ConnectorObject user = getUserByUid(USER_UID);
         Assert.assertTrue(user != null, "updated user " + USER_UID + " not found");
 
-        Assert.assertEquals(user.getAttributeByName(Name.NAME).getValue().get(0), renamedUserName);
+        Assert.assertEquals(user.getAttributeByName(Name.NAME).getValue().get(0), USER_UID);
         Assert.assertEquals(user.getAttributeByName(Uid.NAME).getValue().get(0), USER_UID);
+        Assert.assertEquals(user.getAttributeByName(ProIKConnector.ATTR_USER_NAME).getValue().get(0), renamedUserName);
         Assert.assertEquals(user.getAttributeByName(ProIKConnector.ATTR_FIRST_NAME).getValue().get(0), firstName);
         Assert.assertEquals(user.getAttributeByName(ProIKConnector.ATTR_LAST_NAME).getValue().get(0), lastName);
         Assert.assertEquals(user.getAttributeByName(ProIKConnector.ATTR_EMAIL_ADDRESS).getValue().get(0), email);

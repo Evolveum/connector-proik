@@ -23,7 +23,7 @@ import org.identityconnectors.framework.common.objects.filter.AbstractFilterTran
 import org.identityconnectors.framework.common.objects.filter.EqualsFilter;
 
 /**
- * ProIK Filter translator translate only EqualsFilter with attribute UID.
+ * ProIK Filter translator translate only EqualsFilter with attribute UID & NAME (will be the same).
  * All other filters are not supported in service and are ignored.
  *
  * @author gpalos
@@ -41,7 +41,7 @@ public class ProIKFilterTranslator extends AbstractFilterTranslator<ProIKFilter>
 
         Attribute attr = filter.getAttribute();
         LOG.ok("attr.getName:  {0}, attr.getValue: {1}", attr.getName(), attr.getValue());
-        if (Uid.NAME.equals(attr.getName())) {
+        if (Uid.NAME.equals(attr.getName()) || Name.NAME.equals(attr.getName())) {
             if (attr.getValue() != null && attr.getValue().get(0) != null) {
                 ProIKFilter lf = new ProIKFilter();
                 lf.byUid = String.valueOf(attr.getValue().get(0));

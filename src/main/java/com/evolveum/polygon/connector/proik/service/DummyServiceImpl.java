@@ -34,9 +34,11 @@ public class DummyServiceImpl implements Service {
 
     private static final Map<String, ProUser> users = new HashMap<String, ProUser>();
 
+    public static final String SAMPLE_TCKN = "11111";
+
     static {
         // one sample user in dummy resource.
-        String tckn = "11111";
+        String tckn = SAMPLE_TCKN;
         ProUser pu = new ProUser();
         pu.setTckn(tckn);
         pu.setAdi("firstName");
@@ -49,6 +51,21 @@ public class DummyServiceImpl implements Service {
         pu.setGuncellemeZamani(new GregorianCalendar());
 
         users.put(tckn, pu);
+
+        // one sample user in dummy resource without tckn (will be filtered in connector).
+        String tckn2 = "";
+        ProUser pu2 = new ProUser();
+        pu2.setTckn(tckn2);
+        pu2.setAdi("firstName 2");
+        pu2.setSoyadi("lastName 2");
+        pu2.setKullaniciAdi("userName2");
+        pu2.setEposta("email2@evolveum.com");
+        pu2.setAktifmi(ProIKConnector.DISABLED);
+        pu2.setEtkiAlanieh(ProIKConnector.ENABLED);
+        pu2.setEtkiAlani("domainName");
+        pu2.setGuncellemeZamani(new GregorianCalendar());
+
+        users.put(tckn2, pu2);
     }
 
     @Override
