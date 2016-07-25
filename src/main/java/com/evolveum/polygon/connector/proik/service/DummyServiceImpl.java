@@ -74,7 +74,10 @@ public class DummyServiceImpl implements Service {
             return users.get(tckn);
         }
 
-        return null;
+        // not exists
+        ProUser pu = new ProUser();
+        pu.setSonucKodu(ProIKConnector.CODE_USER_DOES_NOT_EXIST);
+        return pu;
     }
 
     @Override

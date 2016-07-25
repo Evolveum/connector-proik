@@ -240,8 +240,14 @@ public class ProIKConnector implements PoolableConnector, TestOp, SchemaOp, Crea
         // check if user already exists
         try {
             ProUser existUser = service.getUser(uid);
-            if (existUser != null) {
-                throw new AlreadyExistsException("User '" + uid + "' already exists ");
+            if (existUser == null) {
+                throw new InvalidAttributeValueException("getUser must return ProUser with SonucKodu, but returned: "+existUser);
+            }
+            else if (existUser.getSonucKodu() == CODE_USER_DOES_NOT_EXIST) {
+                // do nothing
+                LOG.info("user doesn't exists, SonucKodu: " + existUser.getSonucKodu() + ", Hata: " + existUser.getHata());
+            } else {
+                throw new AlreadyExistsException("User '" + uid + "' already exists, SonucKodu: " + existUser.getSonucKodu() + ", Hata: " + existUser.getHata());
             }
         } catch (RemoteException e) {
             // TODO: its OK if error occured?
@@ -278,7 +284,7 @@ public class ProIKConnector implements PoolableConnector, TestOp, SchemaOp, Crea
 
             ProUserResult result = service.createUser(proUser);
             if (CODE_SUCCESS != result.getSonucKodu()) {
-                throw new ConnectorIOException("create use returned sonucKodu: " + result.getSonucKodu() + ", hata: " + result.getHata());
+                throw new ConnectorIOException("create user returned sonucKodu: " + result.getSonucKodu() + ", hata: " + result.getHata());
             }
 
             LOG.ok("user created, result: sonucKodu:{0}, hata:{1}",
@@ -300,7 +306,8 @@ public class ProIKConnector implements PoolableConnector, TestOp, SchemaOp, Crea
             try {
                 LOG.ok("delete user is transformed to disable user, Uid: {0}", uid);
                 ProUserResult result = service.disableUser(uid.getUidValue());
-                if (CODE_SUCCESS != result.getSonucKodu()) {
+                // if already disabled or returned success, is OK, other is wrong answer
+                if (CODE_SUCCESS != result.getSonucKodu() && CODE_USER_ALREADY_DISABLED == result.getSonucKodu()) {
                     throw new ConnectorIOException("delete (disable) use returned sonucKodu: " + result.getSonucKodu() + ", hata: " + result.getHata());
                 }
             } catch (java.rmi.RemoteException e) {
@@ -335,8 +342,11 @@ public class ProIKConnector implements PoolableConnector, TestOp, SchemaOp, Crea
             // but when update operation is called on resource, we need all attributes
             origUser = service.getUser(targetUserId);
 
-            if (origUser == null || origUser.getSonucKodu() == CODE_USER_DOES_NOT_EXIST) {
-                throw new UnknownUidException("User " + targetUserId + " does not exists");
+            if (origUser == null) {
+                throw new InvalidAttributeValueException("getUser must return ProUser with SonucKodu, but returned: "+origUser);
+            }
+            else if (origUser.getSonucKodu() == CODE_USER_DOES_NOT_EXIST) {
+                throw new UnknownUidException("User " + targetUserId + " does not exists, SonucKodu: " + origUser.getSonucKodu() + ", Hata: " + origUser.getHata());
             }
         } catch (java.rmi.RemoteException e) {
             throw new ConnectorIOException(e.getMessage(), e);
@@ -436,12 +446,20 @@ public class ProIKConnector implements PoolableConnector, TestOp, SchemaOp, Crea
                 //find by Uid (user Primary Key)
                 if (query != null && query.byUid != null) {
                     ProUser user = service.getUser(query.byUid);
+
+
                     if (user == null) {
-                        throw new UnknownUidException("ProUser with uid: "+query.byUid+" not found");
+                        throw new InvalidAttributeValueException("getUser must return ProUser with SonucKodu, but returned: "+user);
+                    }
+                    else if (user.getSonucKodu() == CODE_USER_DOES_NOT_EXIST) {
+                        throw new UnknownUidException("User " + user + " does not exists, SonucKodu: " + user.getSonucKodu() + ", Hata: " + user.getHata());
                     }
                     ConnectorObject connectorObject = convertUserToConnectorObject(user);
                     if (connectorObject != null) {
                         handler.handle(connectorObject);
+                    }
+                    else {
+                        throw new UnknownUidException("User " + user + " does not exists after converting, SonucKodu: " + user.getSonucKodu() + ", Hata: " + user.getHata());
                     }
 
                     // find all
