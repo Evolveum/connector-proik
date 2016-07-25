@@ -243,4 +243,13 @@ public class TestClient {
         Assert.assertEquals(disabledUser.getAttributeByName(OperationalAttributes.ENABLE_NAME).getValue().get(0), disabled, "deleted user must not to be deleted, only disabled");
     }
 
+    @Test
+    public void testLog() throws RemoteException {
+        LOG.warn("Format with one apostrophe(') doesnt log value: {0}", "value");
+        LOG.warn("Format with 'two' apostrophe does log value: {0}", "value");
+        LOG.warn("Format with 'even number' of apostrophes does't log value: {0}", "value");
+        LOG.warn("Format without apostrophe also log value: {0}", "value");
+    }
+
+
 }

@@ -245,9 +245,9 @@ public class ProIKConnector implements PoolableConnector, TestOp, SchemaOp, Crea
             }
             else if (existUser.getSonucKodu() == CODE_USER_DOES_NOT_EXIST) {
                 // do nothing
-                LOG.info("user doesn't exists, SonucKodu: " + existUser.getSonucKodu() + ", Hata: " + existUser.getHata());
+                LOG.info("user does not exists, SonucKodu: " + existUser.getSonucKodu() + ", Hata: " + existUser.getHata());
             } else {
-                throw new AlreadyExistsException("User '" + uid + "' already exists, SonucKodu: " + existUser.getSonucKodu() + ", Hata: " + existUser.getHata());
+                throw new AlreadyExistsException("User " + uid + " already exists, SonucKodu: " + existUser.getSonucKodu() + ", Hata: " + existUser.getHata());
             }
         } catch (RemoteException e) {
             // TODO: its OK if error occured?
@@ -494,7 +494,7 @@ public class ProIKConnector implements PoolableConnector, TestOp, SchemaOp, Crea
     private ConnectorObject convertUserToConnectorObject(ProUser user) throws RemoteException {
         if (StringUtil.isBlank(user.getTckn())) {
             // users on target system without TCKN we don't support (connector framework need UID and is mandatory)
-            LOG.warn("User's TCKN is blank, ignoring, UID: {0}, userName {1}",
+            LOG.warn("Users TCKN is blank, ignoring, UID: {0}, userName {1}",
                     user.getTckn(), user.getKullaniciAdi());
             return null;
         }
