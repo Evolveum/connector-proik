@@ -1,2 +1,3 @@
-# connector-proik
-Polygon/ConnId connector for ProIK
+# ConnId connector for ProIK
+
+This connector is no longer maintained.
